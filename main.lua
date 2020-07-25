@@ -18,24 +18,30 @@ function love.load()
 
   paddleSpeed = 255
 
-  paddle1 = {}
-  paddle1.y = 30
-  paddle1.score = 0
+  objects = {}
 
-  paddle2 = {}
-  paddle2.y = 30
-  paddle2.score = 0
+  objects.paddle1 = {}
+  objects.paddle1.score = 0
+  objects.paddle1.y = 30
+  objects.paddle1.body = love.physics.newBody(world, 10, objects.paddle1.y, "kinematic")
+  objects.paddle1.shape = love.physics.newRectangleShape(30, 80)
+  objects.paddle1.fixture = love.physics.newFixture(objects.paddle1.body, objects.paddle1.shape, 1)
+
+
+  objects.paddle2 = {}
+  objects.paddle2.y = 30
+  objects.paddle2.score = 0
 
   --Ball table
-  ball = {}
+  objects.ball = {}
   --Create the ball body/Rigidbody2D(Kebanyakan pake unity hehehe)
-  ball.body = love.physics.newBody(world, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, "dynamic")
+  objects.ball.body = love.physics.newBody(world, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, "dynamic")
   --Create 2DCIRCLE collider, by setting the radius
-  ball.shape =  love.physics.newCircleShape(10)
+  objects.ball.shape =  love.physics.newCircleShape(10)
   --Clamp or join rigidbody and collider together
-  ball.fixture = love.physics.newFixture(ball.body, ball.shape, 1)
+  objects.ball.fixture = love.physics.newFixture(objects.ball.body, objects.ball.shape, 1)
   --Set the friction, in this case it bounces!
-  ball.fixture:setRestitution(0.9)
+  objects.ball.fixture:setRestitution(0.9)
 
 --Setting the window
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -53,33 +59,35 @@ function love.update(dt)
   world:update(dt)
 
   --Applying the force to ball body
-  ball.body:applyForce(0,0)
+  objects.ball.body:applyForce(-1,-1)
+
+
 
   --First Paddle Control Movement
   if love.keyboard.isDown('w') then
 
-  paddle1.y = math.max(0, paddle1.y + -paddleSpeed * dt)
+  objects.paddle1.body:setY(math.max(0, objects.paddle1.body:getY() + -paddleSpeed * dt))
 
   end
 
   if love.keyboard.isDown('s') then
     --body...
 
-    paddle1.y = math.min(650, paddle1.y + paddleSpeed * dt)
+    objects.paddle1.body:setY(math.min(650, objects.paddle1.body:getY() + paddleSpeed * dt))
   end
 
   --Second Paddle Control Movement
   if love.keyboard.isDown('up') then
     --body...
 
-    paddle2.y = math.max(0, paddle2.y + -paddleSpeed * dt)
+    objects.paddle2.y = math.max(0, objects.paddle2.y + -paddleSpeed * dt)
 
   end
 
   if love.keyboard.isDown('down') then
     --body...
 
-    paddle2.y = math.min(650, paddle2.y + paddleSpeed * dt)
+    objects.paddle2.y = math.min(650, objects.paddle2.y + paddleSpeed * dt)
   end
 
 
@@ -92,13 +100,13 @@ function love.draw()
 
 
   --First paddle graphic
-  love.graphics.rectangle('fill', 10 ,paddle1.y, 30, 80)
+  love.graphics.rectangle('fill', 10 ,objects.paddle1.body:getY(), 30, 80)
 
   --First paddle graphic
-  love.graphics.rectangle('fill', 1235, paddle2.y, 30, 80)
+  love.graphics.rectangle('fill', 1235, objects.paddle2.y, 30, 80)
 
   --Ball graphic
-  love.graphics.circle('fill', ball.body:getX(), ball.body:getY(), ball.shape:getRadius())
+  love.graphics.circle('fill', objects.ball.body:getX(), objects.ball.body:getY(), objects.ball.shape:getRadius())
 
 
 end
