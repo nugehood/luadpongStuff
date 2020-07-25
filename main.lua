@@ -7,6 +7,13 @@ WINDOW_HEIGHT = 720
 
 function love.load()
 
+  --Make the world using gravity and velocity, etc
+  love.physics.setMeter(WINDOW_HEIGHT)
+  --Create world for the physics stuff
+  world = love.physics.newWorld(0, 1*WINDOW_HEIGHT, true)
+
+
+
 --Set the speed of paddle
 
   paddleSpeed = 255
@@ -18,6 +25,17 @@ function love.load()
   paddle2 = {}
   paddle2.y = 30
   paddle2.score = 0
+
+  --Ball table
+  ball = {}
+  --Create the ball body/Rigidbody2D(Kebanyakan pake unity hehehe)
+  ball.body = love.physics.newBody(world, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, "dynamic")
+  --Create 2DCIRCLE collider, by setting the radius
+  ball.shape =  love.physics.newCircleShape(10)
+  --Clamp or join rigidbody and collider together
+  ball.fixture = love.physics.newFixture(ball.body, ball.shape, 1)
+  --Set the friction, in this case it bounces!
+  ball.fixture:setRestitution(0.9)
 
 --Setting the window
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -31,6 +49,11 @@ end
 
 
 function love.update(dt)
+  --Make the world constantly update with deltatime
+  world:update(dt)
+
+  --Applying the force to ball body
+  ball.body:applyForce(0,0)
 
   --First Paddle Control Movement
   if love.keyboard.isDown('w') then
@@ -74,7 +97,8 @@ function love.draw()
   --First paddle graphic
   love.graphics.rectangle('fill', 1235, paddle2.y, 30, 80)
 
-  --Ball graphic, set in center
-  love.graphics.circle('fill', WINDOW_WIDTH / 2 - 2, WINDOW_HEIGHT / 2 - 2, 10)
+  --Ball graphic
+  love.graphics.circle('fill', ball.body:getX(), ball.body:getY(), ball.shape:getRadius())
+
 
 end
