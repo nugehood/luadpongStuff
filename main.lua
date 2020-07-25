@@ -7,6 +7,8 @@ WINDOW_HEIGHT = 720
 
 function love.load()
 
+  font = love.graphics.newFont(100)
+
   --Make the world using gravity and velocity, etc
   love.physics.setMeter(WINDOW_HEIGHT)
   --Create world for the physics stuff
@@ -17,6 +19,7 @@ function love.load()
 --Set the speed of paddle
 
   paddleSpeed = 255
+  BALLSPEED = 2;
 
   --Objects table containing interactable object
   objects = {}
@@ -34,19 +37,36 @@ function love.load()
   --Fix paddle1 Rigidbody2D
   objects.paddle1.fixture = love.physics.newFixture(objects.paddle1.body, objects.paddle1.shape, 1)
 
-
+  --Paddle2/Player2 table
   objects.paddle2 = {}
-
-  objects.paddle2.y = 30
-
+  --Paddle2 y axis
+  objects.paddle2.y =  500
+  --Paddle2 score
   objects.paddle2.score = 0
-
+  --Paddle2 Rigidbody2D
   objects.paddle2.body = love.physics.newBody(world, 1235, objects.paddle2.y, "kinematic")
-
-  objects.paddle2.shape = love.physics.newRectangleShape(30, 80)
-
+  --Paddle2 collider
+  objects.paddle2.shape = love.physics.newRectangleShape(30, 400)
+  --Fix paddle2 Rigidbody2D and collider
   objects.paddle2.fixture = love.physics.newFixture(objects.paddle2.body, objects.paddle2.shape, 1)
 
+  --TopOffset table
+  objects.ground = {}
+  --ground Rigidbody2D
+  objects.ground.body = love.physics.newBody(world, 0, WINDOW_HEIGHT/200)
+--ground collider
+  objects.ground.shape = love.physics.newRectangleShape(9999, 6)
+  --ground fix Rigidbody2D and collider
+  objects.ground.fixture = love.physics.newFixture(objects.ground.body, objects.ground.shape)
+
+  --BottomOffset table
+  objects.ground1 = {}
+  --ground1 Rigidbody2D
+  objects.ground1.body = love.physics.newBody(world, 0,710)
+  --ground1 Rigidbody2D
+  objects.ground1.shape = love.physics.newRectangleShape(9999, 6)
+  --ground1 fix Rigidbody2D and collider
+  objects.ground1.fixture = love.physics.newFixture(objects.ground1.body, objects.ground1.shape)
 
   --Ball table
   objects.ball = {}
@@ -57,7 +77,10 @@ function love.load()
   --Clamp or join rigidbody and collider together
   objects.ball.fixture = love.physics.newFixture(objects.ball.body, objects.ball.shape, 1)
   --Set the friction, in this case it bounces!
-  objects.ball.fixture:setRestitution(0.9)
+  objects.ball.fixture:setRestitution(1)
+
+
+
 
 --Setting the window
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -67,6 +90,7 @@ function love.load()
   })
 
 
+
 end
 
 
@@ -74,8 +98,11 @@ function love.update(dt)
   --Make the world constantly update with deltatime
   world:update(dt)
 
-  --Applying the force to ball body
-  objects.ball.body:applyForce(1,-1)
+
+  objects.ball.body:applyForce(0,1)
+
+
+
 
 
 
@@ -114,6 +141,11 @@ function love.draw()
   --Set background Color
   love.graphics.clear(0.1490196078431373,0.1490196078431373,0.1490196078431373)
 
+  love.graphics.setFont(font)
+
+  love.graphics.print("0",200,20)
+
+  love.graphics.print("0",1000,20)
 
   --First paddle graphic
   love.graphics.rectangle('fill', 10 ,objects.paddle1.body:getY(), 30, 80)
@@ -121,8 +153,13 @@ function love.draw()
   --First paddle graphic
   love.graphics.rectangle('fill', 1235, objects.paddle2.body:getY(), 30, 80)
 
+  love.graphics.polygon("fill", objects.ground.body:getWorldPoints(objects.ground.shape:getPoints()))
+
+  love.graphics.polygon("fill", objects.ground1.body:getWorldPoints(objects.ground1.shape:getPoints()))
+
   --Ball graphic
   love.graphics.circle('fill', objects.ball.body:getX(), objects.ball.body:getY(), objects.ball.shape:getRadius())
+
 
 
 end
