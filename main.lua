@@ -18,19 +18,35 @@ function love.load()
 
   paddleSpeed = 255
 
+  --Objects table containing interactable object
   objects = {}
 
+  --Paddle1/Player1 table
   objects.paddle1 = {}
+  --paddle1 score
   objects.paddle1.score = 0
+  --paddle1 y axis movement
   objects.paddle1.y = 30
+  --paddle1 Rigidbody2D
   objects.paddle1.body = love.physics.newBody(world, 10, objects.paddle1.y, "kinematic")
+  --paddle1 collider
   objects.paddle1.shape = love.physics.newRectangleShape(30, 80)
+  --Fix paddle1 Rigidbody2D
   objects.paddle1.fixture = love.physics.newFixture(objects.paddle1.body, objects.paddle1.shape, 1)
 
 
   objects.paddle2 = {}
+
   objects.paddle2.y = 30
+
   objects.paddle2.score = 0
+
+  objects.paddle2.body = love.physics.newBody(world, 1235, objects.paddle2.y, "kinematic")
+
+  objects.paddle2.shape = love.physics.newRectangleShape(30, 80)
+
+  objects.paddle2.fixture = love.physics.newFixture(objects.paddle2.body, objects.paddle2.shape, 1)
+
 
   --Ball table
   objects.ball = {}
@@ -59,7 +75,7 @@ function love.update(dt)
   world:update(dt)
 
   --Applying the force to ball body
-  objects.ball.body:applyForce(-1,-1)
+  objects.ball.body:applyForce(1,-1)
 
 
 
@@ -80,14 +96,14 @@ function love.update(dt)
   if love.keyboard.isDown('up') then
     --body...
 
-    objects.paddle2.y = math.max(0, objects.paddle2.y + -paddleSpeed * dt)
+    objects.paddle2.body:setY(math.max(0, objects.paddle2.body:getY() + -paddleSpeed * dt))
 
   end
 
   if love.keyboard.isDown('down') then
     --body...
 
-    objects.paddle2.y = math.min(650, objects.paddle2.y + paddleSpeed * dt)
+    objects.paddle2.body:setY(math.min(650, objects.paddle2.body:getY() + paddleSpeed * dt))
   end
 
 
@@ -103,7 +119,7 @@ function love.draw()
   love.graphics.rectangle('fill', 10 ,objects.paddle1.body:getY(), 30, 80)
 
   --First paddle graphic
-  love.graphics.rectangle('fill', 1235, objects.paddle2.y, 30, 80)
+  love.graphics.rectangle('fill', 1235, objects.paddle2.body:getY(), 30, 80)
 
   --Ball graphic
   love.graphics.circle('fill', objects.ball.body:getX(), objects.ball.body:getY(), objects.ball.shape:getRadius())
