@@ -7,6 +7,7 @@ WINDOW_HEIGHT = 720
 
 function love.load()
 
+  --Make new font, size only
   font = love.graphics.newFont(100)
 
   --Make the world using gravity and velocity, etc
@@ -46,7 +47,7 @@ function love.load()
   --Paddle2 Rigidbody2D
   objects.paddle2.body = love.physics.newBody(world, 1235, objects.paddle2.y, "kinematic")
   --Paddle2 collider
-  objects.paddle2.shape = love.physics.newRectangleShape(30, 400)
+  objects.paddle2.shape = love.physics.newRectangleShape(30, 80)
   --Fix paddle2 Rigidbody2D and collider
   objects.paddle2.fixture = love.physics.newFixture(objects.paddle2.body, objects.paddle2.shape, 1)
 
@@ -99,7 +100,7 @@ function love.update(dt)
   world:update(dt)
 
 
-  objects.ball.body:applyForce(0,1)
+  objects.ball.body:applyForce(1,-1)
 
 
 
@@ -133,6 +134,27 @@ function love.update(dt)
     objects.paddle2.body:setY(math.min(650, objects.paddle2.body:getY() + paddleSpeed * dt))
   end
 
+  --Check if ball has gone off the x axis off the right screen.
+  --Round up the decimal number of the ball position.
+  --Add score to paddle 1 and reset position
+  if math.floor(objects.ball.body:getX()) > 1300 then
+    --body...
+    objects.paddle1.score = objects.paddle1.score + 1
+
+    objects.ball.body:setX(WINDOW_WIDTH / 2)
+    objects.ball.body:setY(WINDOW_HEIGHT / 2)
+
+    --Check if ball has gone off the x axis off the left screen.
+    --Round up the decimal number of the ball position.
+    --Add score to paddle 2 and reset position
+elseif math.floor(objects.ball.body:getX()) < 0 then
+    objects.paddle2.score = objects.paddle2.score + 1
+
+    objects.ball.body:setX(WINDOW_WIDTH / 2)
+    objects.ball.body:setY(WINDOW_HEIGHT / 2)
+
+  end
+
 
 end
 
@@ -141,11 +163,14 @@ function love.draw()
   --Set background Color
   love.graphics.clear(0.1490196078431373,0.1490196078431373,0.1490196078431373)
 
+  --Set the font
   love.graphics.setFont(font)
 
-  love.graphics.print("0",200,20)
+  --Display paddle1 score
+  love.graphics.print(objects.paddle1.score,200,20)
 
-  love.graphics.print("0",1000,20)
+  --Display paddle2 score
+  love.graphics.print(objects.paddle2.score,1000,20)
 
   --First paddle graphic
   love.graphics.rectangle('fill', 10 ,objects.paddle1.body:getY(), 30, 80)
@@ -153,13 +178,23 @@ function love.draw()
   --First paddle graphic
   love.graphics.rectangle('fill', 1235, objects.paddle2.body:getY(), 30, 80)
 
+  --Display TopOffset graphic
   love.graphics.polygon("fill", objects.ground.body:getWorldPoints(objects.ground.shape:getPoints()))
 
+  --Display BottomOffset graphic
   love.graphics.polygon("fill", objects.ground1.body:getWorldPoints(objects.ground1.shape:getPoints()))
 
   --Ball graphic
   love.graphics.circle('fill', objects.ball.body:getX(), objects.ball.body:getY(), objects.ball.shape:getRadius())
 
+
+
+end
+
+
+
+function distanceBetween(x1,y2,x2,y2)
+  return math.sqrt((y2 - y1)^2 + (x2-  x1)^2)
 
 
 end
