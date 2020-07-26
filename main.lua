@@ -1,4 +1,6 @@
 
+
+
 --Screen Resolution
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -98,9 +100,9 @@ end
 function love.update(dt)
   --Make the world constantly update with deltatime
   world:update(dt)
-
-
   objects.ball.body:applyForce(1,-1)
+
+
 
 
 
@@ -143,6 +145,7 @@ function love.update(dt)
 
     objects.ball.body:setX(WINDOW_WIDTH / 2)
     objects.ball.body:setY(WINDOW_HEIGHT / 2)
+    objects.ball.body:applyForce(1,1)
 
     --Check if ball has gone off the x axis off the left screen.
     --Round up the decimal number of the ball position.
@@ -152,8 +155,15 @@ elseif math.floor(objects.ball.body:getX()) < 0 then
 
     objects.ball.body:setX(WINDOW_WIDTH / 2)
     objects.ball.body:setY(WINDOW_HEIGHT / 2)
+    objects.ball.body:applyForce(-1,-1)
+  end
+  if objects.paddle1.score >= 11 then
+    love.timer.sleep(1)
 
   end
+
+
+
 
 
 end
